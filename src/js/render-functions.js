@@ -1,31 +1,49 @@
-// Описаний у документації
-import SimpleLightbox from "simplelightbox";
-// Додатковий імпорт стилів
-import "simplelightbox/dist/simple-lightbox.min.css";
 
 
-export function renderImages(images) {
-    const gallery = document.querySelector(".gallery-list");
-    gallery.innerHTML = images.map(image => createImageCard(image)).join("");
-    new SimpleLightbox(".gallery-list a", {}).refresh();
-}
+export function createGalleryMarkup({ hits }) {
+  if (hits.length === 0) {
+    onSearchError();
+    return;
+  }
 
-export function clearGallery() {
-    document.querySelector(".gallery-list").innerHTML = "";
-}
-
-function createImageCard(image) {
-    return `
-    <li>
-    <a href="${image.largeImageURL}">
-    <img src="{image.webformatURL}" alt="${image.tags}" />
-    <a>
-    <div>
-    <p>Likes: ${image.likes}</p>
-                <p>Views: ${image.views}</p>
-                <p>Comments: ${image.comments}</p>
-                <p>Downloads: ${image.downloads}</p>
-            </div>
+  return hits
+    .map(
+      ({
+        webformatURL,
+        largeImageURL,
+        tags,
+        likes,
+        views,
+        comments,
+        downloads,
+      }) => `
+      <li class="gallery-item">
+      <a class="gallery-link" href="${largeImageURL}">
+     <img
+      class="gallery-image"
+      src="${webformatURL}"
+      alt="${tags}"
+    />
+  </a>
+  <ul class="galery-attribute-list">
+    <li class="attribute-item">
+          <p class="attribute">Likes</p>
+          <p class="attribute-value">${likes}</p>
         </li>
-    `;
+        <li class="attribute-item">
+          <p class="attribute">Views</p>
+          <p class="attribute-value">${views}</p>
+        </li>
+        <li class="attribute-item">
+          <p class="attribute">Comments</p>
+          <p class="attribute-value">${comments}</p>
+        </li>
+        <li class="attribute-item">
+          <p class="attribute">Downloads</p>
+          <p class="attribute-value">${downloads}</p>
+        </li>
+        </ul>
+</li>`
+    )
+    .join('');
 }

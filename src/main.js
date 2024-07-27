@@ -6,7 +6,7 @@ import "izitoast/dist/css/iziToast.min.css";
 // Описаний у документації
 
 
-import searchImagesByQuery from "./js/pixabay-api";
+import {searchImages} from "./js/pixabay-api";
 import { createImages, clearImages } from "./js/render-functions";
 
 const form = document.querySelector(".gallery-form");
@@ -20,7 +20,7 @@ function handleSubmit(event) {
     event.preventDefault();
     loader.classList.remove("hiden")
     let wordForSearch = input.value.trim();
-    searchImagesByQuery(`${wordForSearch}`).then((data) => {if (data.total === 0) {
+    searchImages(`${wordForSearch}`).then((data) => {if (data.total === 0) {
       iziToast.error({
         position: "topRight",
           message: 'Sorry, there are no images matching your search query. Please try again!',

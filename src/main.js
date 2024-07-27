@@ -1,57 +1,41 @@
 
-import { fetchImages } from "./js/pixabay-api";
-import { renderImages } from "./js/render-functions";
-import iziToast from 'izitoast';
-import 'izitoast/dist/css/iziToast.min.css';
-import SimpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.min.css';
+// Описаний у документації
+import iziToast from "izitoast";
+// Додатковий імпорт стилів
+import "izitoast/dist/css/iziToast.min.css";
+// Описаний у документації
 
-document.addEventListener('DOMContentLoaded', () => {
-  const gallery = document.querySelector('.gallery');
-  const form = gallery.querySelector('.js-search-form');
-  const loader = document.querySelector('.loader');
 
-  let lightbox = null;
+import searchImagesByQuery from "./js/pixabay-api";
+import { createImages, clearImages } from "./js/render-functions";
 
-  form.addEventListener('submit', async (event) => {
+const form = document.querySelector(".gallery-form");
+const input = document.querySelector(".input-for-gallery");
+const loader = document.querySelector(".loader");
+
+form.addEventListener("submit", handleSubmit)
+
+function handleSubmit(event) {
+    clearImages()
     event.preventDefault();
-    const query = form.value.trim();
-
-    if (query === '') {
+    loader.classList.remove("hiden")
+    let wordForSearch = input.value.trim();
+    searchImagesByQuery(`${wordForSearch}`).then((data) => {if (data.total === 0) {
       iziToast.error({
-        title: 'Error',
-        message: 'Please enter a search query.',
-      });
-      return;
-    }
-
-    loader.style.display = 'block';
-
-    try {
-      const images = await fetchImages(query);
-      loader.style.display = 'none';
-
-      if (images.length === 0) {
-        iziToast.error({
-          title: 'No Results',
+        position: "topRight",
           message: 'Sorry, there are no images matching your search query. Please try again!',
-        });
-      } else {
-        renderImages(images);
-        if (lightbox) {
-          lightbox.refresh();
-        } else {
-          lightbox = new SimpleLightbox('.gallery a', {});
-        }
-      }
-    } catch (error) {
-      loader.style.display = 'none';
-      iziToast.error({
-        title: 'Error',
-        message: 'Something went wrong. Please try again later.',
       });
-    } finally {
-      form.value = '';
-    }
+      loader.classList.add("hiden")
+      return;
+    } if (wordForSearch === '') {
+      iziToast.error({
+        position: "topRight",
+          message: 'Please fill the input',
+      });
+      loader.classList.add("hiden")
+      return;
+  } else {createImages(data)}
+    loader.classList.add("hiden")
   });
-});
+    
+}

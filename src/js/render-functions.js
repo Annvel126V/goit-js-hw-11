@@ -1,49 +1,45 @@
+// Описаний у документації
+import SimpleLightbox from "simplelightbox";
+// Додатковий імпорт стилів
+import "simplelightbox/dist/simple-lightbox.min.css";
 
 
-export function createGalleryMarkup({ hits }) {
-  if (hits.length === 0) {
-    onSearchError();
-    return;
-  }
+export function createImages(data) {
+    const lightbox = new SimpleLightbox('.gallery-list a', { 
+        captions: true,
+        captionsData: 'alt',
+        captionDelay: 250
+     });
+    const list = document.querySelector(".gallery-list");
+  let images = data.hits.map((hit) =>
+    `<div class="image-frame">
+  <a href="${hit.largeImageURL}">
+  <img class="image" src="${hit.webformatURL}" alt="${hit.tags}" /></a>
+  <div class ="text-gallery">
+  <div class="text-block">
+  <h5>likes</h5>
+  <p>${hit.likes}</p>
+  </div>
+  <div class="text-block">
+  <h5>views</h5>
+  <p>${hit.views}</p>
+  </div>
+  <div class="text-block">
+  <h5>comments</h5>
+  <p>${hit.comments}</p>
+  </div>
+  <div class="text-block">
+  <h5>downloads</h5>
+  <p>${hit.downloads}</p>
+  </div>
+  </div>
+  </div>`)
+    .join("");
+    list.insertAdjacentHTML("afterbegin", images);
+    lightbox.refresh();
+}
 
-  return hits
-    .map(
-      ({
-        webformatURL,
-        largeImageURL,
-        tags,
-        likes,
-        views,
-        comments,
-        downloads,
-      }) => `
-      <li class="gallery-item">
-      <a class="gallery-link" href="${largeImageURL}">
-     <img
-      class="gallery-image"
-      src="${webformatURL}"
-      alt="${tags}"
-    />
-  </a>
-  <ul class="galery-attribute-list">
-    <li class="attribute-item">
-          <p class="attribute">Likes</p>
-          <p class="attribute-value">${likes}</p>
-        </li>
-        <li class="attribute-item">
-          <p class="attribute">Views</p>
-          <p class="attribute-value">${views}</p>
-        </li>
-        <li class="attribute-item">
-          <p class="attribute">Comments</p>
-          <p class="attribute-value">${comments}</p>
-        </li>
-        <li class="attribute-item">
-          <p class="attribute">Downloads</p>
-          <p class="attribute-value">${downloads}</p>
-        </li>
-        </ul>
-</li>`
-    )
-    .join('');
+export function clearImages() {
+    const list = document.querySelector(".gallery-list");
+    list.innerHTML = "";
 }

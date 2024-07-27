@@ -6,7 +6,7 @@ import "izitoast/dist/css/iziToast.min.css";
 // Описаний у документації
 
 
-import {searchImages} from "./js/pixabay-api";
+import { searchImages } from "./js/pixabay.api";
 import { createImages, clearImages } from "./js/render-functions";
 
 const form = document.querySelector(".gallery-form");
